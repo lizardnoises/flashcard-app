@@ -30,8 +30,8 @@ export default function Flashcard({ flashcard }) {
       <div className='front' ref={frontElement}>
         {question}
         <div className='flashcard-options'>
-          {options.map((option, i) => (
-            <div className='flashcard-option' key={i}>
+          {options.map((option) => (
+            <div className='flashcard-option' key={option}>
               {option}
             </div>
           ))}

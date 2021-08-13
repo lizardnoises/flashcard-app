@@ -1,13 +1,29 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import FlashcardList from './FlashcardList';
 import { shuffle, decodeString } from './utils';
 import './app.css';
 
 function App() {
-  const [flashcards, setFlashcards] = useState(SAMPLE_FLASHCARDS);
+  const [flashcards, setFlashcards] = useState([]);
+  const [categories, setCategories] = useState([]);
+
+  const categoryElement = useRef();
+  const amountElement = useRef();
 
   useEffect(() => {
-    fetch('https://opentdb.com/api.php?amount=10')
+    fetch('https://opentdb.com/api_category.php')
+      .then((response) => response.json())
+      .then((response) => {
+        setCategories(response.trivia_categories);
+      });
+  }, []);
+
+  function handleSubmit(e) {
+    e.preventDefault();
+
+    fetch(
+      `https://opentdb.com/api.php?amount=${amountElement.current.value}&category=${categoryElement.current.value}`
+    )
       .then((response) => response.json())
       .then((response) => {
         setFlashcards(
@@ -28,28 +44,41 @@ function App() {
           })
         );
       });
-  }, []);
+  }
 
   return (
-    <div className='container'>
-      <FlashcardList flashcards={flashcards} />
-    </div>
+    <>
+      <form className='header' onSubmit={handleSubmit}>
+        <div className='form-group'>
+          <label htmlFor='category'>Category</label>
+          <select id='category' ref={categoryElement}>
+            {categories.map((category) => (
+              <option value={category.id} key={category.id}>
+                {category.name}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className='form-group'>
+          <label htmlFor='amount'>Number of Questions</label>
+          <input
+            type='number'
+            id='amount'
+            min='1'
+            step='1'
+            defaultValue={10}
+            ref={amountElement}
+          />
+        </div>
+        <div className='form-group'>
+          <button className='btn'>Generate</button>
+        </div>
+      </form>
+      <div className='container'>
+        <FlashcardList flashcards={flashcards} />
+      </div>
+    </>
   );
 }
-
-const SAMPLE_FLASHCARDS = [
-  {
-    id: 1,
-    question: 'What is 2 + 2?',
-    answer: '4',
-    options: ['2', '3', '4', '5'],
-  },
-  {
-    id: 2,
-    question: 'Question 2',
-    answer: 'Answer',
-    options: ['Answer 1', 'Answer 2', 'Answer 3', 'Answer 4'],
-  },
-];
 
 export default App;
