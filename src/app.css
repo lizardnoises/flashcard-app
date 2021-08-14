@@ -82,7 +82,7 @@ body {
 .card .front,
 .card .back {
   position: absolute;
-  padding: 1rem;
+  padding: 2rem;
   backface-visibility: hidden;
 }
 
@@ -91,7 +91,7 @@ body {
 }
 
 .flashcard-options {
-  margin-top: 0.5rem;
+  margin-top: 1.5rem;
 }
 
 .flashcard-option {

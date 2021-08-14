@@ -1,14 +1,12 @@
-import React, { useState, useEffect, useRef } from 'react';
-import FlashcardList from './FlashcardList';
+import React, { useState, useEffect } from 'react';
+import FlashcardList from './flashcards/FlashcardList';
+import Header from './header/Header';
 import { shuffle, decodeString } from './utils';
 import './app.css';
 
 function App() {
   const [flashcards, setFlashcards] = useState([]);
   const [categories, setCategories] = useState([]);
-
-  const categoryElement = useRef();
-  const amountElement = useRef();
 
   useEffect(() => {
     fetch('https://opentdb.com/api_category.php')
@@ -18,12 +16,8 @@ function App() {
       });
   }, []);
 
-  function handleSubmit(e) {
-    e.preventDefault();
-
-    fetch(
-      `https://opentdb.com/api.php?amount=${amountElement.current.value}&category=${categoryElement.current.value}`
-    )
+  function handleHeaderSubmit(amount, category) {
+    fetch(`https://opentdb.com/api.php?amount=${amount}&category=${category}`)
       .then((response) => response.json())
       .then((response) => {
         setFlashcards(
@@ -48,32 +42,7 @@ function App() {
 
   return (
     <>
-      <form className='header' onSubmit={handleSubmit}>
-        <div className='form-group'>
-          <label htmlFor='category'>Category</label>
-          <select id='category' ref={categoryElement}>
-            {categories.map((category) => (
-              <option value={category.id} key={category.id}>
-                {category.name}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div className='form-group'>
-          <label htmlFor='amount'>Number of Questions</label>
-          <input
-            type='number'
-            id='amount'
-            min='1'
-            step='1'
-            defaultValue={10}
-            ref={amountElement}
-          />
-        </div>
-        <div className='form-group'>
-          <button className='btn'>Generate</button>
-        </div>
-      </form>
+      <Header categories={categories} submit={handleHeaderSubmit} />
       <div className='container'>
         <FlashcardList flashcards={flashcards} />
       </div>
