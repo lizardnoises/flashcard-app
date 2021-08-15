@@ -13,6 +13,10 @@ export default function Flashcard({ flashcard }) {
     setHeight(Math.max(frontHeight, backHeight, 100));
   }
 
+  function handleClick() {
+    setFlipped(!flipped);
+  }
+
   const { question, answer, options } = flashcard;
 
   useEffect(setMaxHeight, [question, answer, options]);
@@ -25,7 +29,9 @@ export default function Flashcard({ flashcard }) {
     <div
       className={`card ${flipped ? 'flipped' : ''}`}
       style={{ height: height }}
-      onClick={() => setFlipped(!flipped)}
+      tabIndex={0}
+      onClick={handleClick}
+      onKeyDown={(e) => e.key !== 'Enter' || handleClick()}
     >
       <div className='front' ref={frontElement}>
         {question}
